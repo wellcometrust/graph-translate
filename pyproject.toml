@@ -1,0 +1,10 @@
+[project]
+name = "graph-translate"
+version = "0.1.0"
+authors = [
+    {name = "Machine Learning Team", emai = "MachineLearningEngineers@wellcome.org"}
+]
+description = "Predicting translation of biomedical publications using a GNN approach."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
