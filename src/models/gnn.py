@@ -7,8 +7,8 @@ from torch.nn import Linear
 from torch.nn import ModuleList
 from torch_geometric.nn import JumpingKnowledge
 
-from translation_classifier.models.utils import get_conv
-from translation_classifier.models.utils import GraphLinear
+from .utils import get_conv
+from .utils import GraphLinear
 
 
 class GNN(torch.nn.Module):

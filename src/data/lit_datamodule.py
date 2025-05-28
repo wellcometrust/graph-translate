@@ -7,8 +7,8 @@ from torch_geometric.loader import NeighborLoader
 from torch_geometric.utils import add_self_loops
 from torch_geometric.utils import to_undirected
 
-from translation_classifier.data import pyg_datasets
-from translation_classifier.data import transforms
+from . import pyg_datasets
+from . import transforms
 
 ROOT = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../data")
 
@@ -40,7 +40,7 @@ class TranslationLitData(LightningDataModule):
         self.pyg_data = partial(
             getattr(pyg_datasets, pyg_data),
             root=root,
-            ndoes=nodes,
+            nodes=nodes,
             edges=edges,
             embeddings=embeddings,
             pre_transform=transform_cls,

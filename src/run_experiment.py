@@ -3,8 +3,8 @@ from lightning.pytorch.cli import LightningCLI
 from lightning.pytorch.cli import SaveConfigCallback
 from lightning.pytorch.loggers import Logger
 
-from translation_classifier.data import TranslationLitData
-from translation_classifier.models import NodeLevelGNN
+from data import TranslationLitData
+from models import NodeLevelGNN
 
 
 class LoggerSaveConfigCallback(SaveConfigCallback):

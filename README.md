@@ -6,23 +6,25 @@ This library provides functionality to train a graph neural network (GNN) model 
 
 ## Setup
 
-The translation classifier GNN is built using [Pytorch Geometric (PyG)](<https://pytorch-geometric.readthedocs.io/en/latest/get_started/introduction.html>). To ensure correct functioning of this library, several requirements have to be installed in addition to those specified in `environment.yml`, in the following order:
+* Install uv: `curl -LsSf https://astral.sh/uv/install.sh | sh`
 
-1. pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f `https://data.pyg.org/whl/torch-2.3.0+cpu.html`
-2. pip install torch_geometric
-3. pip install torch
-4. pip install lightning torchmetrics
+* Add dependencies for model training: `uv sync`. Models were trained on a cloud compute instance with a Nvidia A10G GPU.
 
-To make development of training and inference pipelines run as smoothly as possible, add the translation_classifier to your Python path: `export PYTHONPATH="${PYTHONPATH}:/path/to/translation/translation_classifier"` -> add this to your `~/.bashrc` and `source ~/.bashrc`.
+* To enable logging to Weights & Biases, run `wandb login`
 
-To enable logging to Weights & Biases, run `wandb login`.
+## Code structure
 
-## translation_classifier
+`src/data` contains functionality to load graph data from `.parquet`, and `src/models` contains GNN classifier model code.
 
-Contains GNN classifier model code, as well as functionality to load translation data from Wellcome Academic Graph.
+Refer to the [data documentation](src/data/README.md) or [model documentation](src/models/README.md) to find out more about these components.
 
-Refer to the [data documentation](translation_classifier/data/README.md) or [model documentation](translation_classifier/models/README.md) to find out more about these components.
+## Model training
 
-## training
+Model training is done via a custom [LightningCLI](<https://lightning.ai/docs/pytorch/stable/cli/lightning_cli.html>). Training a GNN for translation classification is as simple as:
 
-To find out more about model training, refer to the [training documentation](training/README.md).
+```
+cd src
+uv run run_experiment.py fit --config config.yaml
+```
+
+Refer to the sample `config.yaml` for the full set of hyperparameters and other configuration options. While the sample config contains some callbacks, additional ones can be specified.

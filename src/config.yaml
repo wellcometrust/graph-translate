@@ -119,6 +119,9 @@ model:
 data:
   pyg_data: TranslationInMemoryDataset
   root: /data/translation/data/downsampled/clinicaltrialsdirect2y
+  edges: null # Path to edge index file
+  nodes: null # Path to file containing node IDs and labels
+  embeddings: null # Path to text embeddings file
   pre_transform: CitationCount
   directed: true
   self_loops: true

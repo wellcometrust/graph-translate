@@ -1,7 +1,7 @@
 import torch
 from torch_geometric.data import InMemoryDataset
 
-from translation_classifier.data.process import TranslationDataset
+from .process import TranslationDataset
 
 
 class TranslationInMemoryDataset(InMemoryDataset):
@@ -28,7 +28,7 @@ class TranslationInMemoryDataset(InMemoryDataset):
         super(TranslationInMemoryDataset, self).__init__(
             root, transform, pre_transform, pre_filter, log, force_reload
         )
-        self.data = torch.load(self.processed_paths[0])
+        self.data = torch.load(self.processed_paths[0], weights_only=False)
         self.pre_transform = pre_transform
 
     @property

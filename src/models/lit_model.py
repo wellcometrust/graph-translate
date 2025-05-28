@@ -12,7 +12,7 @@ from torchmetrics.classification import BinaryPrecisionRecallCurve
 from torchmetrics.classification import BinaryRecall
 from torchmetrics.classification import BinaryROC
 
-from translation_classifier.models.gnn import GNN
+from .gnn import GNN
 
 LOSS = "binary_cross_entropy_with_logits"
 HIDDEN_CHANNELS = 512
