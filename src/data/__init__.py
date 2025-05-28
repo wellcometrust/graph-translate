@@ -1,1 +1,1 @@
-from .lit_datamodule import TranslationLitData
+from .lit_datamodule import TranslationLitData as TranslationLitData

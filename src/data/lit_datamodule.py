@@ -2,15 +2,13 @@ import os
 from functools import partial
 
 from lightning import LightningDataModule
-from torch_geometric.loader import DataLoader
-from torch_geometric.loader import NeighborLoader
-from torch_geometric.utils import add_self_loops
-from torch_geometric.utils import to_undirected
+from torch_geometric.loader import DataLoader, NeighborLoader
+from torch_geometric.utils import add_self_loops, to_undirected
 
-from . import pyg_datasets
-from . import transforms
+from . import pyg_datasets, transforms
 
 ROOT = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../data")
+
 
 class TranslationLitData(LightningDataModule):
     """Lightning dataset for translational graph data."""
@@ -29,9 +27,27 @@ class TranslationLitData(LightningDataModule):
         directed=False,
         self_loops=False,
         batch_size=32,
-        num_neighbors=[30, 30],
-        **loader_kwargs
+        num_neighbors=None,
+        **loader_kwargs,
     ):
+        """Initialize the Lightning data module for translational graph data.
+
+        Args:
+            pyg_data (str): Name of the Pytorch geometric dataset class to use.
+            root (str): Root directory for the dataset.
+            edges (str): S3 URI to the edges file.
+            nodes (str): S3 URI to the nodes file.
+            embeddings (str): S3 URI to the embeddings file.
+            metadata (str, optional): S3 URI to metadata file.
+            features (iterable, optional): Names of additional features.
+            downsample (bool, optional): Whether to downsample the training set.
+            pre_transform (str, optional): Name of the pre-transform to apply.
+            directed (bool, optional): Whether the graph is directed.
+            self_loops (bool, optional): Whether to add self-loops to the graph.
+            batch_size (int, optional): Batch size for data loaders.
+            num_neighbors (list or int, optional): Number of neighbors for NeighborLoader, otherwise will use full-batch DataLoader.
+            **loader_kwargs: Additional keyword arguments for data loaders.
+        """
         super().__init__()
 
         self.directed = directed
@@ -47,7 +63,7 @@ class TranslationLitData(LightningDataModule):
             embeddings=embeddings,
             metadata=metadata,
             features=features,
-            downsample = downsample,
+            downsample=downsample,
             pre_transform=transform_cls,
         )
         if isinstance(num_neighbors, list):
@@ -55,7 +71,7 @@ class TranslationLitData(LightningDataModule):
                 NeighborLoader,
                 num_neighbors=num_neighbors,
                 batch_size=batch_size,
-                **loader_kwargs
+                **loader_kwargs,
             )
             self._loader_type = "neighbor"
         else:
@@ -63,7 +79,9 @@ class TranslationLitData(LightningDataModule):
             self._loader_type = "full"
 
     def prepare_data(self):
-        """Data preparation step (this is run on a single GPU). This is where the data is loaded from memory.
+        """Data preparation step (this is run on a single GPU).
+
+        This is where the data is loaded from memory.
         If specified, the edges are converted to undirected and/or self-loops are added.
         """
         dataset = self.pyg_data()

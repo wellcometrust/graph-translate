@@ -3,12 +3,10 @@ from functools import partial
 import torch
 import torch.nn.functional as F
 import torch_geometric.nn
-from torch.nn import Linear
-from torch.nn import ModuleList
+from torch.nn import Linear, ModuleList
 from torch_geometric.nn import JumpingKnowledge
 
-from .utils import get_conv
-from .utils import GraphLinear
+from .utils import GraphLinear, get_conv
 
 
 class GNN(torch.nn.Module):
@@ -27,7 +25,22 @@ class GNN(torch.nn.Module):
         alpha,
         use_edge_features,
     ):
-        super(GNN, self).__init__()
+        """Initialise the GNN model.
+
+        Args:
+            num_features(int): Number of input features.
+            hidden_dim(int): Number of hidden channels.
+            num_layers(int): Number of GNN layers.
+            dropout(float): Dropout rate.
+            directed(bool): Whether to use DirGNNConv layers for directed graphs.
+            conv_type(str): Type of convolutional layer to use.
+            jumping_knowledge(str or None): Jumping knowledge mode, if any.
+            normalize(bool): Whether to normalize node features after each layer.
+            alpha(float): Alpha coefficient for directed graphs.
+            use_edge_features(bool): Whether to use edge features in the convolution.
+
+        """
+        super().__init__()
 
         if conv_type == "Linear":
             conv_cls = GraphLinear

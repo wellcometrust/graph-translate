@@ -3,14 +3,16 @@ import torch
 import wandb
 from lightning.pytorch import LightningModule
 from torchmetrics import MetricCollection
-from torchmetrics.classification import AUROC
-from torchmetrics.classification import BinaryAccuracy
-from torchmetrics.classification import BinaryAveragePrecision
-from torchmetrics.classification import BinaryF1Score
-from torchmetrics.classification import BinaryPrecision
-from torchmetrics.classification import BinaryPrecisionRecallCurve
-from torchmetrics.classification import BinaryRecall
-from torchmetrics.classification import BinaryROC
+from torchmetrics.classification import (
+    AUROC,
+    BinaryAccuracy,
+    BinaryAveragePrecision,
+    BinaryF1Score,
+    BinaryPrecision,
+    BinaryPrecisionRecallCurve,
+    BinaryRecall,
+    BinaryROC,
+)
 
 from .gnn import GNN
 
@@ -46,6 +48,23 @@ class NodeLevelGNN(LightningModule):
         weighted_loss,
         use_edge_features,
     ):
+        """Initialise the NodeLevelGNN model.
+
+        Args:
+            num_features(int): Number of input features.
+            hidden_dim(int): Number of hidden channels.
+            num_layers(int): Number of GNN layers.
+            dropout(float): Dropout rate.
+            conv_type(str): Type of convolutional layer to use.
+            directed(bool): Whether to use a directed graph neural network model (DirGNN).
+            jumping_knowledge(str, optional): Jumping knowledge mode (e.g., "cat", "max", "lstm").
+            normalize(bool): Whether to normalize the output.
+            alpha(float): Alpha coefficient for directed graphs.
+            loss(str, optional): Loss function to use. Defaults to binary cross-entropy with logits.
+            weighted_loss(bool): Whether to use a weighted loss function.
+            use_edge_features(bool): Whether to use edge features in the model.
+
+        """
         super().__init__()
         self.save_hyperparameters(ignore="_instantiator")
 
@@ -95,7 +114,9 @@ class NodeLevelGNN(LightningModule):
         self.val_pr = BinaryPrecisionRecallCurve()
 
     def forward(self, data, mode="train"):
-        """Run data through the model. Depending on the mode (train, val, test), the data is
+        """Run data through the model.
+
+        Depending on the mode (train, val, test), the data is
         subset by the relevant node mask such that the loss and metrics are only calculated based on the subset.
 
         Args:
@@ -110,10 +131,7 @@ class NodeLevelGNN(LightningModule):
         """
         x, y, edge_index, weight = data.x, data.y, data.edge_index, data.weight
 
-        if hasattr(data, "edge_attr"):
-            edge_attr = data.edge_attr
-        else:
-            edge_attr = None
+        edge_attr = data.edge_attr if hasattr(data, "edge_attr") else None
 
         x = self.model(x, edge_index, edge_attr)
         if mode == "train":
@@ -133,6 +151,7 @@ class NodeLevelGNN(LightningModule):
 
         Args:
             batch(torch_geometric.data.Data): Graph data batch.
+            batch_idx(int): Index of the batch in the training set.
 
         Returns:
             torch.Tensor: Training loss.
@@ -149,6 +168,7 @@ class NodeLevelGNN(LightningModule):
 
         Args:
             batch(torch_geometric.data.Data): Graph data batch.
+            batch_idx(int): Index of the batch in the validation set.
 
         Returns:
             torch.Tensor: Validation loss.
@@ -174,6 +194,7 @@ class NodeLevelGNN(LightningModule):
 
         Args:
             batch(torch_geometric.data.Data): Graph data batch.
+            batch_idx(int): Index of the batch in the test set.
 
         """
         out, y, _ = self.forward(batch, mode="test")

@@ -26,6 +26,13 @@ class GraphLinear(Linear):
     """Simple linear layer which ignores the edge index."""
 
     def __init__(self, in_features, out_features, bias=True):
+        """Initialise the GraphLinear layer.
+
+        Args:
+            in_features(int): Number of input features.
+            out_features(int): Number of output features.
+            bias(bool, optional): Whether to include a bias term. Defaults to True.
+        """
         super().__init__(in_features, out_features, bias)
 
     def forward(self, x, edge_index, edge_attr=None):
@@ -33,6 +40,8 @@ class GraphLinear(Linear):
 
         Args:
             x(torch.Tensor): Input features.
+            edge_index(torch.Tensor): Edge index (not used).
+            edge_attr(torch.Tensor, optional): Edge attribute(s) (not used).
 
         Returns:
             torch.Tensor: Output features.
