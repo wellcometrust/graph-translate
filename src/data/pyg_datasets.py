@@ -13,8 +13,11 @@ class TranslationInMemoryDataset(InMemoryDataset):
         edges=None,
         nodes=None,
         embeddings=None,
+        metadata=None,
         resample_train="downsample",
         transform=None,
+        features=None,
+        downsample=None,
         pre_transform=None,
         pre_filter=None,
         log=True,
@@ -24,11 +27,14 @@ class TranslationInMemoryDataset(InMemoryDataset):
         self.edges = edges
         self.nodes = nodes
         self.embeddings = embeddings
+        self.metadata = metadata
+        self.features = features
+        self.downsample = downsample
 
         super(TranslationInMemoryDataset, self).__init__(
             root, transform, pre_transform, pre_filter, log, force_reload
         )
-        self.data = torch.load(self.processed_paths[0], weights_only=False)
+        self.data = torch.load(self.processed_paths[0])
         self.pre_transform = pre_transform
 
     @property
@@ -40,9 +46,10 @@ class TranslationInMemoryDataset(InMemoryDataset):
         return "translationdata.pt"
 
     def process(self):
-        data = TranslationDataset(self.edges, self.nodes, self.embeddings)
+        data = TranslationDataset(self.edges, self.nodes, self.embeddings, self.metadata, self.features)
         data.generate_node_masks(resample_train=self.resample_train)
-        data = data.to_pyg()
+        data, node_mapping = data.to_pyg(self.downsample)
         if self.pre_transform is not None:
             data = self.pre_transform(data)
         torch.save(data, self.processed_paths[0])
+        node_mapping.to_csv(self.processed_paths[0].split('processed/translationdata.pt')[0] + 'node_mapping.csv')

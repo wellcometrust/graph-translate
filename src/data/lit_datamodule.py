@@ -12,7 +12,6 @@ from . import transforms
 
 ROOT = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../data")
 
-
 class TranslationLitData(LightningDataModule):
     """Lightning dataset for translational graph data."""
 
@@ -23,6 +22,9 @@ class TranslationLitData(LightningDataModule):
         edges=None,
         nodes=None,
         embeddings=None,
+        metadata=None,
+        features=None,
+        downsample=False,
         pre_transform=None,
         directed=False,
         self_loops=False,
@@ -40,9 +42,12 @@ class TranslationLitData(LightningDataModule):
         self.pyg_data = partial(
             getattr(pyg_datasets, pyg_data),
             root=root,
-            nodes=nodes,
             edges=edges,
+            nodes=nodes,
             embeddings=embeddings,
+            metadata=metadata,
+            features=features,
+            downsample = downsample,
             pre_transform=transform_cls,
         )
         if isinstance(num_neighbors, list):

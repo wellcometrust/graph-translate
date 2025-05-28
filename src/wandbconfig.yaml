@@ -1,0 +1,31 @@
+program: run_experiment.py
+
+method: bayes  # You can also use grid or random
+metric:
+  name: val_BinaryAUROC
+  goal: maximize
+
+parameters:
+  model.conv_type:
+    values: ['Linear']
+  model.num_layers:
+    values: [2, 3, 4, 8]
+  model.hidden_dim:
+    values: [32, 64, 128, 256]
+  model.dropout:
+    values: [0.1, 0.2, 0.3, 0.4, 0.5]
+  model.jumping_knowledge:
+    values: [false]
+  data.batch_size:
+    values: [256]
+  data.num_neighbors:
+    values: [[100,100], [500,500], [1000,1000], [500,1000], [1000,500]]
+
+command:
+- ${env}
+- python3
+- ${program}
+- "fit"
+- "--config"
+- "config.yaml"
+- ${args}

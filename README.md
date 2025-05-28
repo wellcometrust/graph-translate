@@ -28,3 +28,7 @@ uv run run_experiment.py fit --config config.yaml
 ```
 
 Refer to the sample `config.yaml` for the full set of hyperparameters and other configuration options. While the sample config contains some callbacks, additional ones can be specified.
+
+### Weights & Biases Hyperparameter Optimization
+
+Experiments can be run sequentially over a range of parameters by setting parameters in the `wandconfig.yaml` file. Note that any parameters not set in this file will default to the `config.yaml`. Initialise agent using `wandb sweep wandbconfig.yaml`.
