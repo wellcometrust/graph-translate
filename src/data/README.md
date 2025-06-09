@@ -7,3 +7,46 @@ Note that a custom transform `CitationCount` can be specified when creating the 
 ## Lightning DataModule
 
 You can find more about Lightning DataModules [here](<https://lightning.ai/docs/pytorch/stable/data/datamodule.html#lightningdatamodule>). There is a datamodule for translation classification called `TranslationLitData`, which can be found in `lit_datamodule.py`. This can be used in conjunction with a Lightning Trainer. Graph data can be loaded as a full-batch dataset or with a PyG NeighborLoader (if initialised with `num_neighbors`).
+
+## Input Data
+
+The input data is expected to be in the following format:
+
+Nodes: Parquet file in the following format:
+
+```parquet
+dimensions_publication_id: string
+year: int
+label: bool
+```
+
+Where `dimensions_publication_id` is the unique identifier for each publication, `year` is the year of publication, and `label` indicates whether the publication node translated (True) or not (False).
+
+Edges: Individual parquet files for each year containing edges (citing and cited publication IDs) in the following format:
+
+```parquet
+cited_dimensions_publication_id: string
+cited_year: int
+citing_dimensions_publication_id: string
+citing_year: int
+```
+
+Embeddings: Parquet file in the following format:
+
+```parquet
+publication_id: string
+embeddings: list of float
+```
+
+Where `publication_id` is the unique identifier for each publication and `embeddings` is a list of floats representing the SCIBERT text embeddings for that publication.
+
+Metadata: Parquet file in the following format:
+
+```parquet
+dimensions_publication_id: string
+citation_count: int
+ct_linked: bool
+... (other metadata fields)
+```
+
+Where `dimensions_publication_id` is the unique identifier for each publication and `citation_count` is the number of citations for that publication in the time-delta.
