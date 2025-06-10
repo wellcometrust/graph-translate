@@ -119,17 +119,17 @@ class TranslationDataset:
             feature_cols = list(
                 metadata.columns[metadata.columns.str.startswith(tuple(features))]
             )
-            cols = feature_cols + ["dimensions_publication_id"]
+            cols = feature_cols + ["publication_id"]
             metadata = metadata[cols].dropna()
 
             metadata = pd.DataFrame(
                 {
                     "features": list(metadata[feature_cols].to_numpy()),
-                    "dimensions_publication_id": metadata["dimensions_publication_id"],
+                    "publication_id": metadata["publication_id"],
                 }
             )
 
-        return metadata.set_index("dimensions_publication_id")["features"].to_dict()
+        return metadata.set_index("publication_id")["features"].to_dict()
 
     def filter_nodes_by_edges(self):
         """Filter out any nodes that do not have citation data."""
@@ -140,8 +140,8 @@ class TranslationDataset:
             nodes_by_year = self.nodes[
                 (self.nodes["year"] == year)
                 & (
-                    self.nodes["dimensions_publication_id"].isin(
-                        df["cited_dimensions_publication_id"].tolist()
+                    self.nodes["publication_id"].isin(
+                        df["cited_publication_id"].tolist()
                     )
                 )
             ]
@@ -155,7 +155,7 @@ class TranslationDataset:
             print(year)
             for c in ["citing", "cited"]:
                 df = df[
-                    df[f"{c}_dimensions_publication_id"].isin(self.embeddings.keys())
+                    df[f"{c}_publication_id"].isin(self.embeddings.keys())
                 ]
             self.edges[year] = df
 
@@ -165,28 +165,28 @@ class TranslationDataset:
         for year, df in self.edges.items():
             print(year)
             for c in ["cited", "citing"]:
-                df = df[df[f"{c}_dimensions_publication_id"].isin(self.metadata.keys())]
+                df = df[df[f"{c}_publication_id"].isin(self.metadata.keys())]
             self.edges[year] = df
 
     def filter_nodes_by_metadata(self):
         """Filter out any nodes where one or both publications IDs do not have metadata features."""
         self.nodes = self.nodes[
-            self.nodes["dimensions_publication_id"].isin(self.metadata.keys())
+            self.nodes["publication_id"].isin(self.metadata.keys())
         ]
 
     def filter_edges_by_nodes(self):
         """Filter out obsolete edges which are not attached to any source nodes."""
         for year in self.nodes["year"].unique():
             node_ids = self.nodes.loc[
-                self.nodes["year"] == year, "dimensions_publication_id"
+                self.nodes["year"] == year, "publication_id"
             ].tolist()
             l1 = self.edges[year][
-                self.edges[year]["cited_dimensions_publication_id"].isin(node_ids)
+                self.edges[year]["cited_publication_id"].isin(node_ids)
             ]
 
-            l1_ids = l1["citing_dimensions_publication_id"].tolist()
+            l1_ids = l1["citing_publication_id"].tolist()
             l2 = self.edges[year][
-                self.edges[year]["cited_dimensions_publication_id"].isin(l1_ids)
+                self.edges[year]["cited_publication_id"].isin(l1_ids)
             ]
 
             self.edges[year] = pd.concat([l1, l2]).drop_duplicates()
@@ -339,7 +339,7 @@ class TranslationDataset:
 
         """
         self.nodes["node_id"] = (
-            self.nodes["dimensions_publication_id"]
+            self.nodes["publication_id"]
             + "_"
             + self.nodes["year"].astype(str)
         )
@@ -347,13 +347,13 @@ class TranslationDataset:
         for year, edges_df in self.edges.items():
             for c in ["citing", "cited"]:
                 edges_df[f"{c}_id"] = (
-                    edges_df[f"{c}_dimensions_publication_id"] + "_" + str(year)
+                    edges_df[f"{c}_publication_id"] + "_" + str(year)
                 )
                 nodes_from_edges.append(
-                    edges_df[[f"{c}_id", f"{c}_dimensions_publication_id"]].rename(
+                    edges_df[[f"{c}_id", f"{c}_publication_id"]].rename(
                         columns={
                             f"{c}_id": "node_id",
-                            f"{c}_dimensions_publication_id": "dimensions_publication_id",
+                            f"{c}_publication_id": "publication_id",
                         }
                     )
                 )
@@ -392,16 +392,16 @@ class TranslationDataset:
             lambda x: x.sample(frac=downsample, random_state=123, replace=True)
         )
 
-        unique_nodes = list(self.nodes["dimensions_publication_id"])
+        unique_nodes = list(self.nodes["publication_id"])
 
         for year, edges in self.edges.items():
             first_order_citations = list(
-                edges[edges["cited_dimensions_publication_id"].isin(unique_nodes)][
-                    "citing_dimensions_publication_id"
+                edges[edges["cited_publication_id"].isin(unique_nodes)][
+                    "citing_publication_id"
                 ]
             )
             edges = edges[
-                edges["cited_dimensions_publication_id"].isin(
+                edges["cited_publication_id"].isin(
                     unique_nodes + first_order_citations
                 )
             ]
@@ -431,14 +431,14 @@ class TranslationDataset:
         }
         x = torch.tensor(
             np.array(
-                self.nodes["dimensions_publication_id"].map(self.embeddings).tolist()
+                self.nodes["publication_id"].map(self.embeddings).tolist()
             ).astype(np.float32)
         )
 
         if self.features:
             x_features = torch.tensor(
                 np.array(
-                    self.nodes["dimensions_publication_id"].map(self.metadata).tolist()
+                    self.nodes["publication_id"].map(self.metadata).tolist()
                 ).astype(np.float32)
             )
 

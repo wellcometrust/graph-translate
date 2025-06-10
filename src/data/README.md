@@ -15,19 +15,19 @@ The input data is expected to be in the following format:
 Nodes: Parquet file in the following format:
 
 ```parquet
-dimensions_publication_id: string
+publication_id: string
 year: int
 label: bool
 ```
 
-Where `dimensions_publication_id` is the unique identifier for each publication, `year` is the year of publication, and `label` indicates whether the publication node translated (True) or not (False).
+Where `publication_id` is the unique identifier for each publication, `year` is the year of publication, and `label` indicates whether the publication node translated (True) or not (False).
 
 Edges: Individual parquet files for each year containing edges (citing and cited publication IDs) in the following format:
 
 ```parquet
-cited_dimensions_publication_id: string
+cited_publication_id: string
 cited_year: int
-citing_dimensions_publication_id: string
+citing_publication_id: string
 citing_year: int
 ```
 
@@ -43,10 +43,10 @@ Where `publication_id` is the unique identifier for each publication and `embedd
 Metadata: Parquet file in the following format:
 
 ```parquet
-dimensions_publication_id: string
+publication_id: string
 citation_count: int
 ct_linked: bool
 ... (other metadata fields)
 ```
 
-Where `dimensions_publication_id` is the unique identifier for each publication and `citation_count` is the number of citations for that publication in the time-delta.
+Where `publication_id` is the unique identifier for each publication and `citation_count` is the number of citations for that publication in the time-delta.
