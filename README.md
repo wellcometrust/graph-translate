@@ -34,6 +34,6 @@ Refer to the sample `config.yaml` for the full set of hyperparameters and other 
 Experiments can be run sequentially over a range of parameters by setting parameters in the `wandconfig.yaml` file. Note that any parameters not set in this file will default to the `config.yaml`. Initialise agent using `wandb sweep wandbconfig.yaml`.
 
 ### Citation
-If you use GraphTranslate in your research project or are looking to reference this work, please cite the accompanying paper:
+If you use GraphTranslate in your research project or are looking to reference this work, please cite the [accompanying paper](https://aclanthology.org/2025.sdp-1.4/):
 
-[Emily Muller, Justin Boylan-Toomey, Jack Ekinsmyth, Arne Robben, María De La Paz Cardona, and Antonia Langfelder. 2025. GraphTranslate: Predicting Clinical Trial Translation using Graph Neural Networks on Biomedical Literature. In Proceedings of the Fifth Workshop on Scholarly Document Processing (SDP 2025), pages 31–41, Vienna, Austria. Association for Computational Linguistics.](https://aclanthology.org/2025.sdp-1.4/)
+*Emily Muller, Justin Boylan-Toomey, Jack Ekinsmyth, Arne Robben, María De La Paz Cardona, and Antonia Langfelder. 2025. GraphTranslate: Predicting Clinical Trial Translation using Graph Neural Networks on Biomedical Literature. In Proceedings of the Fifth Workshop on Scholarly Document Processing (SDP 2025), pages 31–41, Vienna, Austria. Association for Computational Linguistics.*
